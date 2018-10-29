@@ -6,7 +6,7 @@
  * Optionally can remove HTML comments
  * Content of pre, code and script tags remains unchanged.
  *
- * Written by 4X_Pro, 2017 (http:/xpro.su)
+ * Written by 4X_Pro, 2017 (http://4xpro.ru)
  ******************************/
 
 function minify_html($text,$remove_comments = true) {
@@ -22,6 +22,10 @@ function minify_html($text,$remove_comments = true) {
   // processing script tag
   $script_count=preg_match_all('|(<script[^>]*>.*?</script>)|is',$text,$script_matches);
   for ($i=0; $i<$script_count; $i++) $text=str_replace($script_matches[0][$i],'<SCRIPT|'.$i.'|'.$key.'>',$text);
+ 
+  // processing textarea tag
+  $textarea_count=preg_match_all('|(<textarea[^>]*>.*?</textarea>)|is',$text,$textarea_matches);
+  for ($i=0; $i<$textarea_count; $i++) $text=str_replace($textarea_matches[0][$i],'<TEXTAREA|'.$i.'|'.$key.'>',$text);
 
   // processing comments if they not to be removed
   if (!$remove_comments) {
@@ -53,6 +57,8 @@ function minify_html($text,$remove_comments = true) {
   if (!$remove_comments) {
     for ($i=0; $i<$comment_count; $i++) $text=str_replace('<COMMENT|'.$i.'|'.$key.'>',$comment_matches[0][$i],$text);
   }
+  // restoring textarea tag
+  for ($i=0; $i<$textarea_count; $i++) $text=str_replace('<TEXTAREA|'.$i.'|'.$key.'>',$textarea_matches[0][$i],$text);        
   // restoring script tag
   for ($i=0; $i<$script_count; $i++) $text=str_replace('<SCRIPT|'.$i.'|'.$key.'>',$script_matches[0][$i],$text);
   // restoring code tag
